@@ -1,0 +1,39 @@
+# Python virtual environment
+myenv/
+
+# Output and run folders
+output_videos/
+runs/
+
+# Training folder
+training/
+
+# Video files
+*.mp4
+*.avi
+input_videos/*.mp4
+input_videos/*.avi
+output_videos/*.mp4
+output_videos/*.avi
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+.ipynb 
+
+# folders
+# Compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Model files
+models/
+*.pt
+
+# VS Code settings
+.vscode/
+
+# Misc
+*.log
+*.tmp

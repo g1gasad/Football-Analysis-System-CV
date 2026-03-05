@@ -2,7 +2,7 @@ from ultralytics import YOLO
 import supervision as sv
 
 class Trackers:
-    def __init__(self, model_path="yolov8n.pt"):
+    def __init__(self, model_path):
         self.model = YOLO(model_path)
         self.tracker = sv.ByteTrack()
 

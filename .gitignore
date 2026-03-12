@@ -1,6 +1,10 @@
 # Python virtual environment
 myenv/
 
+# add a line to ignore pickle files
+*.pkl
+
+
 # Output and run folders
 output_videos/
 runs/

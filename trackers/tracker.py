@@ -72,10 +72,11 @@ class Trackers:
 
         return tracks;
 
-    def draw_ellipse(self, frame, bbox, color, label=None):
+    def draw_ellipse(self, frame, bbox, color, label=None, track_id=None):
         x1, y1, x2, y2 = map(int, bbox)
-        center_coordinates = ((x1 + x2) // 2, y2)
-        axes_width = (x2 - x1) // 2
+        x_center = (x1 + x2) // 2
+        center_coordinates = (x_center, y2)
+        axes_width = (x2 - x1)
         axes = (axes_width, int(0.35 * axes_width))
 
         cv2.ellipse(
@@ -86,10 +87,36 @@ class Trackers:
             color=color, 
             thickness=2
             )
+        rectangle_width = 40
+        rectangle_height=20
+        x1_rect = x_center - rectangle_width//2
+        x2_rect = x_center + rectangle_width//2
+        y1_rect = (y2- rectangle_height//2) +15
+        y2_rect = (y2+ rectangle_height//2) +15
 
-        # if label:
-            # cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+        if track_id is not None:
+            cv2.rectangle(frame,
+                          (int(x1_rect),int(y1_rect) ),
+                          (int(x2_rect),int(y2_rect)),
+                          color,
+                          cv2.FILLED)
+            
+            x1_text = x1_rect+12
+            if track_id > 99:
+                x1_text -=10
+            
+            cv2.putText(
+                frame,
+                f"{track_id}",
+                (int(x1_text),int(y1_rect+15)),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.6,
+                (0,0,0),
+                2
+            )
+
         return frame
+
 
     def draw_annotations(self, video_frames, tracks):
         output_video_frames=[]
@@ -103,13 +130,13 @@ class Trackers:
             # draw Players
             for player_id, player_info in player_dict.items():
                 bbox = player_info["bbox"]
-                annotated_frame = self.draw_ellipse(annotated_frame, bbox, color=(0, 255, 0), label=f"Player {player_id}")
+                annotated_frame = self.draw_ellipse(annotated_frame, bbox, color=(0, 255, 0), label=f"Player", track_id=player_id)
             for referee_id, referee_info in referee_dict.items():
                 bbox = referee_info["bbox"]
-                annotated_frame = self.draw_ellipse(annotated_frame, bbox, color=(255, 0, 0), label=f"Referee {referee_id}")
+                annotated_frame = self.draw_ellipse(annotated_frame, bbox, color=(255, 0, 0), label="Referee")
             for ball_id, ball_info in ball_dict.items():
                 bbox = ball_info["bbox"]
-                annotated_frame = self.draw_ellipse(annotated_frame, bbox, color=(0, 0, 255), label=f"Ball {ball_id}")
+                annotated_frame = self.draw_ellipse(annotated_frame, bbox, color=(0, 0, 255), label=f"Ball", track_id=ball_id)
             
             output_video_frames.append(annotated_frame)
         return output_video_frames

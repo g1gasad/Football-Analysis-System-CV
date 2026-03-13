@@ -3,6 +3,7 @@ import supervision as sv
 import pickle
 import os
 import cv2
+import numpy as np
 class Trackers:
     def __init__(self, model_path):
         self.model = YOLO(model_path)
@@ -117,6 +118,19 @@ class Trackers:
 
         return frame
 
+    def draw_triangle(self, frame, bbox, color):
+        # we are creating inverted triangle with the base at the bottom of the bounding box and the tip pointing downwards
+        x1, y1, x2, y2 = map(int, bbox)
+        x_center = (x1 + x2) // 2
+        # center_coordinates = (x_center, y2)
+        triangle_points = np.array([
+            [x_center, y1],
+            [x_center-10, y1-20],
+            [x_center+10, y1-20]
+        ])
+        cv2.drawContours(frame, np.array([triangle_points]), 0, color, cv2.FILLED)
+        cv2.drawContours(frame, np.array([triangle_points]), 0, (0, 0, 0), 2)
+        return frame
 
     def draw_annotations(self, video_frames, tracks):
         output_video_frames=[]
@@ -136,7 +150,7 @@ class Trackers:
                 annotated_frame = self.draw_ellipse(annotated_frame, bbox, color=(255, 0, 0), label="Referee")
             for ball_id, ball_info in ball_dict.items():
                 bbox = ball_info["bbox"]
-                annotated_frame = self.draw_ellipse(annotated_frame, bbox, color=(0, 0, 255), label=f"Ball", track_id=ball_id)
+                annotated_frame = self.draw_triangle(annotated_frame, bbox, color=(0, 0, 255))
             
             output_video_frames.append(annotated_frame)
         return output_video_frames

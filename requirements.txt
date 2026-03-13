@@ -2,3 +2,7 @@ ultralytics
 supervision
 opencv-python
 roboflow
+pandas
+numpy
+matplotlib
+scikit-learn

@@ -3,7 +3,7 @@ myenv/
 
 # add a line to ignore pickle files
 *.pkl
-
+*.ipynb
 
 # Output and run folders
 output_videos/

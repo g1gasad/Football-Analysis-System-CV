@@ -19,14 +19,14 @@ def main():
     # init team assigner
     team_assigner = TeamAssigner()
     team_assigner.assign_team_color(video_frames[0], 
-                        tracks[0]['player_detections'])
+                        tracks['players'][0])
 
-    for frame_num, player_track in enumerate(tracks):
-        for player_id, player_info in player_track['player_detections'].items():
+    for frame_num, player_track in enumerate(tracks['players']):
+        for player_id, player_info in player_track.items():
             bbox = player_info['bbox']
             team_label = team_assigner.get_player_team(video_frames[frame_num], bbox, player_id)
-            tracks[frame_num]['player_detections'][player_id]['team'] = team_label
-            tracks[frame_num]['player_detections'][player_id]['team_color'] = team_label.
+            tracks['players'][frame_num][player_id]['team'] = team_label
+            tracks['players'][frame_num][player_id]['team_color'] = team_assigner.team_colors[team_label]
 
     # draw output
     # draw object tracks on frames

@@ -16,7 +16,7 @@ class TeamAssigner:
         kmeans.fit(image_2d)  # Assuming two teams
         return kmeans
 
-    def player_color(self, frame, bbox):
+    def get_player_color(self, frame, bbox):
         image = frame[int(bbox[1]):int(bbox[3]), int(bbox[0]):int(bbox[2])]
         top_half_image = image[:image.shape[0]//2, :]
 
@@ -34,14 +34,14 @@ class TeamAssigner:
         return player_color
 
     def assign_team_color(self, frame, player_detections):
-        player_color = []
+        player_colors = []
         for _, player_detection in player_detections.items():
             bbox = player_detection['bbox']
             player_color = self.get_player_color(frame, bbox)
-            player_color.append(player_color)
+            player_colors.append(player_color)
 
-        kmeans = KMeans(n_clusters=2, init="k-means ++", n_init=1)
-        kmeans.fit(player_color)
+        kmeans = KMeans(n_clusters=2, init="k-means++", n_init=1)
+        kmeans.fit(player_colors)
         self.kmeans = kmeans
 
         self.team_colors[1] = kmeans.cluster_centers_[0]
@@ -52,7 +52,8 @@ class TeamAssigner:
             return self.player_team_dict[player_id]
 
         player_color = self.get_player_color(frame, bbox)
-        team_label = self.kmeans.predict([player_color.reshape(1, -1)])[0]
+
+        team_label = self.kmeans.predict(player_color.reshape(1, -1))[0]
         team_label += 1  # Convert to 1 and 2
         self.player_team_dict[player_id] = team_label  # Team labels are 1 and 2
 

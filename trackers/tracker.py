@@ -144,10 +144,13 @@ class Trackers:
             # draw Players
             for player_id, player_info in player_dict.items():
                 bbox = player_info["bbox"]
-                annotated_frame = self.draw_ellipse(annotated_frame, bbox, color=(0, 255, 0), label=f"Player", track_id=player_id)
+                color = player_info.get("team_color", (0, 0, 255))
+                annotated_frame = self.draw_ellipse(annotated_frame, bbox, color=color, label=f"Player", track_id=player_id)
+
             for referee_id, referee_info in referee_dict.items():
                 bbox = referee_info["bbox"]
                 annotated_frame = self.draw_ellipse(annotated_frame, bbox, color=(255, 0, 0), label="Referee")
+            
             for ball_id, ball_info in ball_dict.items():
                 bbox = ball_info["bbox"]
                 annotated_frame = self.draw_triangle(annotated_frame, bbox, color=(0, 0, 255))

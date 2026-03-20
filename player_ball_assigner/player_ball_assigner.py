@@ -1,6 +1,6 @@
 import sys
 sys.path.append("..")
-from utils import get_center_of_bbox
+from utils.bbox_utils import measure_distance, get_center_of_bbox
 
 class PlayerBallAssigner:
     def __init__(self):
@@ -8,14 +8,19 @@ class PlayerBallAssigner:
 
     def assign_ball_to_players(self, players, ball_bbox):
         ball_position = get_center_of_bbox(ball_bbox)
+        minimum_distance = 99999
+        assigned_player=-1
 
         for player_id, player_info in players.items():
             player_bbox = player_info["bbox"]
-            player_position = get_center_of_bbox(player_bbox)
 
-            distance = ((ball_position[0] - player_position[0]) ** 2 + (ball_position[1] - player_position[1]) ** 2) ** 0.5
+            distance_left = measure_distance((player_bbox[0], player_bbox[-1]), ball_position)
+            distance_right = measure_distance((player_bbox[2], player_bbox[-1]), ball_position)
+            distance = min(distance_left, distance_right)
 
             if distance < self.max_player_ball_distance:
-                players[player_id]["has_ball"] = True
-            else:
-                players[player_id]["has_ball"] = False
+                if distance < minimum_distance:
+                    minimum_distance=distance
+                    assigned_player=player_id
+
+        return assigned_player

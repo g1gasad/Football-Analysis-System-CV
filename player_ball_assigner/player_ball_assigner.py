@@ -1,12 +1,12 @@
 import sys
-sys.path.append("..")
+sys.path.append("../")
 from utils.bbox_utils import measure_distance, get_center_of_bbox
 
 class PlayerBallAssigner:
     def __init__(self):
         self.max_player_ball_distance = 70
 
-    def assign_ball_to_players(self, players, ball_bbox):
+    def assign_ball_to_player(self, players, ball_bbox):
         ball_position = get_center_of_bbox(ball_bbox)
         minimum_distance = 99999
         assigned_player=-1

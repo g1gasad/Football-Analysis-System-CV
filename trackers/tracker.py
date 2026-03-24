@@ -143,7 +143,27 @@ class Trackers:
         cv2.drawContours(frame, np.array([triangle_points]), 0, (0, 0, 0), 2)
         return frame
 
-    def draw_annotations(self, video_frames, tracks):
+    def draw_team_ball_control(self, frame, frame_num, team_ball_control):
+        # Draw a semi-transparent rectangle
+        overlay=frame.copy()
+        cv2.rectangle(overlay, (1350, 850), (1900, 970), (255, 255, 255), -1)
+        alpha=.4
+        cv2.addWeighted(overlay, alpha, frame, 1-alpha, 0, frame)
+
+        team_ball_control_till_frame = team_ball_control[:frame_num+1]
+        # get the number of times each team had the ball
+        team_1_num_frames = team_ball_control_till_frame[team_ball_control_till_frame==1].shape[0]
+        team_2_num_frames = team_ball_control_till_frame[team_ball_control_till_frame==2].shape[0]
+        team_1 = team_1_num_frames/(team_1_num_frames+team_2_num_frames)
+        team_2 = team_2_num_frames/(team_1_num_frames+team_2_num_frames)
+
+        cv2.putText(frame, f"Team 1 Ball Control: {team_1*100:.2f}%",
+                         (1400,900), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,0), 3)
+        cv2.putText(frame, f"Team 2 Ball Control: {team_2*100:.2f}%",
+                         (1400,950), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,0), 3)
+        return frame
+
+    def draw_annotations(self, video_frames, tracks, team_ball_control):
         output_video_frames=[]
         for frame_num, frame in enumerate(video_frames):
             
@@ -167,7 +187,10 @@ class Trackers:
             
             for ball_id, ball_info in ball_dict.items():
                 bbox = ball_info["bbox"]
-                annotated_frame = self.draw_triangle(annotated_frame, bbox, color=(0, 0, 255))
+                annotated_frame = self.draw_triangle(annotated_frame, bbox, color=(0,255,0))
             
+            # draw Team Ball Control
+            annotated_frame=self.draw_team_ball_control(annotated_frame, frame_num, team_ball_control)
+
             output_video_frames.append(annotated_frame)
         return output_video_frames

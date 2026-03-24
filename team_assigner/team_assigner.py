@@ -55,6 +55,11 @@ class TeamAssigner:
 
         team_label = self.kmeans.predict(player_color.reshape(1, -1))[0]
         team_label += 1  # Convert to 1 and 2
+
+        if player_id==101:
+            team_id=1
+        if player_id==219:
+            team_id=2
         self.player_team_dict[player_id] = team_label  # Team labels are 1 and 2
 
         return team_label  # Team labels are 1 and 2

@@ -29,7 +29,7 @@ class CameraMovementEstimator:
             mask=mask_features
         )
 
-    def adjust_positions_to_tracks(self, tracks, camera_movement_per_frame):
+    def add_adjust_positions_to_tracks(self, tracks, camera_movement_per_frame):
         for object, object_tracks in tracks.items():
             for frame_num, track in enumerate(object_tracks):
                 camera_movement = camera_movement_per_frame[frame_num]

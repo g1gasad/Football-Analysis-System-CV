@@ -5,6 +5,8 @@ from team_assigner import TeamAssigner
 from player_ball_assigner import PlayerBallAssigner
 import numpy as np
 from camera_movement_estimator import CameraMovementEstimator
+import json
+
 def main():
     # read vid
     video_path = "D:\\Projects\\End-to-End\\Football-Analysis-System\\input_videos\\08fd33_4.mp4"
@@ -17,15 +19,15 @@ def main():
                                                 stub_path="stubs\\track_stubs.pkl")
 
     # Get object positions
-    tracker_instance.add_position_to_tracks(tracks)
+    tracker_instance.add_positions_to_tracks(tracks)
 
     # camera movement estimator
     camera_movement_estimator = CameraMovementEstimator(video_frames[0])
     camera_movement_per_frame = camera_movement_estimator.get_camera_movement(video_frames, 
                                             read_from_stub=True, stub_path="stubs/camera_movement_stub.pkl")
 
-    tracks = camera_movement_estimator.adjust_positions_to_tracks(tracks, camera_movement_per_frame)
-
+    camera_movement_estimator.add_adjust_positions_to_tracks(tracks, camera_movement_per_frame)
+    
     # interpolate ball positions
     tracks['ball'] = tracker_instance.interpolate_ball_position(tracks['ball'])
 
@@ -54,6 +56,10 @@ def main():
         else:
             team_ball_control.append(team_ball_control[-1])
     team_ball_control = np.array(team_ball_control)
+    # with open('dict-output/data.json', 'w') as f:
+        # json.dump(tracks, f, indent=4)
+    with open("dict-output/data.txt", "w") as f:
+        f.write(str(tracks))
 
     # draw output
     # draw object tracks on frames

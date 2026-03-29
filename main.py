@@ -5,7 +5,8 @@ from team_assigner import TeamAssigner
 from player_ball_assigner import PlayerBallAssigner
 import numpy as np
 from camera_movement_estimator import CameraMovementEstimator
-import json
+from view_transformer import ViewTransformer
+from speed_and_distance_estimator import SpeedAndDistance_Estimator
 
 def main():
     # read vid
@@ -28,8 +29,16 @@ def main():
 
     camera_movement_estimator.add_adjust_positions_to_tracks(tracks, camera_movement_per_frame)
     
+    # View transformer
+    view_transformer = ViewTransformer()
+    view_transformer.add_transformed_position_to_tracks(tracks)
+
     # interpolate ball positions
     tracks['ball'] = tracker_instance.interpolate_ball_position(tracks['ball'])
+
+    # speed and distance estimator
+    speed_and_distance_estimator = SpeedAndDistance_Estimator()
+    speed_and_distance_estimator.add_speed_and_distance_to_tracks(tracks)
 
     # init team assigner
     team_assigner = TeamAssigner()
@@ -56,10 +65,11 @@ def main():
         else:
             team_ball_control.append(team_ball_control[-1])
     team_ball_control = np.array(team_ball_control)
+    
     # with open('dict-output/data.json', 'w') as f:
         # json.dump(tracks, f, indent=4)
-    with open("dict-output/data.txt", "w") as f:
-        f.write(str(tracks))
+    # with open("dict-output/data.txt", "w") as f:
+        # f.write(str(tracks))
 
     # draw output
     # draw object tracks on frames
@@ -67,6 +77,9 @@ def main():
 
     # draw camera movement
     output_video_frames = camera_movement_estimator.draw_camera_movement(output_video_frames, camera_movement_per_frame)
+
+    # Draw speed and distance
+    speed_and_distance_estimator.draw_speed_and_distance(output_video_frames, tracks)
 
     # save video
     output_video_path = "D:\\Projects\\End-to-End\\Football-Analysis-System\\output_videos\\output_video.avi"

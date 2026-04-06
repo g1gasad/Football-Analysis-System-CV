@@ -19,4 +19,4 @@
 
         break
 
-2. 
+2. check how does YoloV8 detects and tracks objects
